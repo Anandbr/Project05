@@ -394,7 +394,7 @@ public abstract class AbstractDungeon implements DungeonInterface {
         moveMessage.append("You find :1 Arrow \n");
       }
       if (items.equals("No Smell")) {
-        moveMessage.append("\n");
+        moveMessage.append("No Smell\n");
       }
       if (items.equals("High Smell")) {
         moveMessage.append("Something Smells TERRIBLE !!\n");
@@ -640,6 +640,7 @@ public abstract class AbstractDungeon implements DungeonInterface {
 
     StringBuilder moveMessage = new StringBuilder();
     player.setCurrentLocation(startingPoint);
+
     for(var node :dungeonGraph.getIsVisitedList().entrySet()) {
       if(node.getKey().getKey().equals(startingPoint.getKey()) && node.getKey().getValue().equals(startingPoint.getValue())) {
         dungeonGraph.getIsVisitedList().replace(node.getKey(),true);

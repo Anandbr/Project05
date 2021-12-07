@@ -140,13 +140,13 @@ public class DungeonGameView extends JFrame implements IView {
   }
 
   @Override
-  public void generateGameView(int row, int col) {
+  public void generateGameView(ReadOnlyModel newModel) {
 
     GridBagLayout gridBagLayout = new GridBagLayout();
     GridBagConstraints gridBagConstraints = new GridBagConstraints();
     gridBagConstraints.fill = GridBagConstraints.VERTICAL;
     JPanel base = new JPanel(gridBagLayout);
-    this.mazeMap = new JPanel(new GridLayout(row, col));
+    this.mazeMap = new JPanel(new GridLayout(newModel.getNumberOfRows(), newModel.getNumberOfColumns()));
     gridBagLayout.setConstraints(this.mazeMap, gridBagConstraints);
     base.add(controlPanel);
 
@@ -154,12 +154,12 @@ public class DungeonGameView extends JFrame implements IView {
     //System.out.println(row);
     //System.out.println(col);
 
-    for (int i = 0; i < row; i++) {
-      for (int j = 0; j < col; j++) {
+    for (int i = 0; i < newModel.getNumberOfRows(); i++) {
+      for (int j = 0; j < newModel.getNumberOfColumns(); j++) {
         JPanel panel = new JPanel();
         LayoutManager overlay = new OverlayLayout(panel);
         panel.setLayout(overlay);
-        panel.add(this.getImageLabel("black", 100, 100));
+        panel.add(this.getImageLabel("blank", 100, 100));
         this.mazeMap.add(panel);
 
       }
@@ -180,60 +180,58 @@ public class DungeonGameView extends JFrame implements IView {
   }
 
   @Override
-  public void refreshView(int row, int col) {
+  public void refreshView(ReadOnlyModel newModel) {
     //System.out.println(maze.getPlayerLocation());
     //System.out.println(maze.getPossibleStep());
 
     this.promptPane.revalidate();
-    for (int i = 0; i < row; i++) {
-      for (int j = 0; j < col; j++) {
-        int loc = i * col + j;
+    for (int i = 0; i < newModel.getNumberOfRows(); i++) {
+      for (int j = 0; j < newModel.getNumberOfColumns(); j++) {
+        int loc = i * newModel.getNumberOfColumns() + j;
 //        JPanel panel = (JPanel) this.mazeMap.getComponentAt(i, j); //todo this is rendering null. need to see how to generate this panel
         JPanel panel = (JPanel) this.mazeMap.getComponent(loc);
         panel.removeAll();
 
-
-        for (Map.Entry<Integer, Integer> room : model.getAdjacencyList().keySet()) {
-          if (room.getKey().equals(this.playerLoc.getKey()) && room.getValue().equals(this.playerLoc.getValue())) { //todo why is player loc out of boundary?
-            panel.add(this.playerLabel);
-            panel.add(this.getImageLabel("player", 60, 60));
-          }
+        if (i == (newModel.getPlayer().getCurrentLocation().getKey()) &&
+            j == (newModel.getPlayer().getCurrentLocation().getValue())) { //todo why is player loc out of boundary?
+          panel.add(this.getImageLabel("player", 60, 60));
         }
 
         Map.Entry<Integer,Integer> tempLoc = new AbstractMap.SimpleEntry<>(i,j);
 
-        if(model.getVisitedList().get(tempLoc)) {
+        if(newModel.getVisitedList().get(tempLoc)) {
 
-          if (model.getMonsterList().get(tempLoc) != null) {
+          if (newModel.getMonsterList().get(tempLoc) != null) {
             panel.add(this.getImageLabel("wumpus", 60, 60));
           }
 
-          if(model.getArrowList().get(tempLoc).get(ArrowEnum.CROOKED_ARROW) > 0) {
+          if(newModel.getArrowList().get(tempLoc).get(ArrowEnum.CROOKED_ARROW) > 0) {
             panel.add(this.getImageLabel("arrow", 60, 60));
 
           }
 
-          if(model.getTreasureList().get(tempLoc).get(TreasureEnum.DIAMOND) > 0) {
-            panel.add(this.getImageLabel("daimond", 60, 60));
+          if(newModel.getTreasureList().get(tempLoc).get(TreasureEnum.DIAMOND) > 0) {
+            panel.add(this.getImageLabel("diamond", 60, 60));
 
           }
 
-          if(model.getTreasureList().get(tempLoc).get(TreasureEnum.SAPPHIRE) > 0) {
+          if(newModel.getTreasureList().get(tempLoc).get(TreasureEnum.SAPPHIRE) > 0) {
             panel.add(this.getImageLabel("sapphire", 60, 60));
 
           }
 
-          if(model.getTreasureList().get(tempLoc).get(TreasureEnum.RUBY) > 0) {
+          if(newModel.getTreasureList().get(tempLoc).get(TreasureEnum.RUBY) > 0) {
             panel.add(this.getImageLabel("ruby", 60, 60));
 
           }
 
           //TODO how to add smell
 
-          panel.add(this.getImageLabel(this.setRoomImage(tempLoc), 100, 100));
+          panel.add(this.getImageLabel(this.setRoomImage(tempLoc,newModel), 100, 100));
+
 
           } else {
-            panel.add(this.getImageLabel("black", 100, 100));
+            panel.add(this.getImageLabel("blank", 100, 100));
           }
           panel.revalidate();
         }
@@ -270,13 +268,13 @@ public class DungeonGameView extends JFrame implements IView {
   /**
    * Return the image name of one room.
    *
-   * @param room current room
+   * @param newModel new model
    * @return image name of this room
    */
-  private String setRoomImage(Map.Entry<Integer,Integer> room) {
+  private String setRoomImage(Map.Entry<Integer,Integer> tempLoc, ReadOnlyModel newModel) {
     String imageType = "";
 
-    EnumSet<DirectionEnum> directions = model.getPossibleMoves(room);
+    EnumSet<DirectionEnum> directions = newModel.getPossibleMoves(tempLoc);
 
     if (directions.contains(DirectionEnum.NORTH) && directions.contains(DirectionEnum.SOUTH) &&
             !directions.contains(DirectionEnum.EAST) && !directions.contains(DirectionEnum.WEST)) {
@@ -405,11 +403,11 @@ public class DungeonGameView extends JFrame implements IView {
   }
 
   //todo this is setting the player location based on the input in game setting whereas the room row and col is being considered 3 * 3 in next todo. need to change that.
-  @Override
-  public void setChangingMark(Entry<Integer, Integer> playerLoc) {
-    this.playerLoc = playerLoc;
+  //@Override
+  //public void setChangingMark(Entry<Integer, Integer> playerLoc) {
+  //  this.playerLoc = playerLoc;
 
-  }
+  //}
 
 
 }

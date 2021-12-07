@@ -12,6 +12,28 @@ import model.kruskal.TreasureEnum;
 
 public interface ReadOnlyModel {
 
+
+  /**
+   * Gets number of rows in the dungeon.
+   *
+   * @return number of rows in the dungeon.
+   */
+  int getNumberOfRows();
+
+  /**
+   * Gets number of cols in the dungeon.
+   *
+   * @return number of cols in the dungeon.
+   */
+  int getNumberOfColumns();
+
+  /**
+   * Get the  player of the game.
+   *
+   * @return the player object of the dungeon
+   */
+  PlayerInterface getPlayer();
+
   /**
    * Gets player description.
    *

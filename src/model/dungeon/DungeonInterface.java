@@ -26,19 +26,6 @@ public interface DungeonInterface extends ReadOnlyModel {
 
 
 
-  /**
-   * Gets number of rows in the dungeon.
-   *
-   * @return number of rows in the dungeon.
-   */
-  int getNumberOfRows();
-
-  /**
-   * Gets number of cols in the dungeon.
-   *
-   * @return number of cols in the dungeon.
-   */
-  int getNumberOfColumns();
 
   /**
    * Tells if the dungeon is a wrapped  or not.
@@ -54,12 +41,7 @@ public interface DungeonInterface extends ReadOnlyModel {
    */
   int getInterconnectivity();
 
-  /**
-   * Get the  player of the game.
-   *
-   * @return the player object of the dungeon
-   */
-  PlayerInterface getPlayer();
+
 
 
 

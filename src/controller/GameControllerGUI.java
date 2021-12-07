@@ -7,6 +7,7 @@ import java.awt.event.KeyListener;
 
 import model.dungeon.DungeonInterface;
 import model.dungeon.PlayerStatus;
+import model.dungeon.ReadOnlyModel;
 import model.dungeon.UnWrappedDungeon;
 import model.dungeon.WrappedDungeon;
 import model.kruskal.DirectionEnum;
@@ -15,10 +16,10 @@ import view.IView ;
 
 public class GameControllerGUI implements GameControllerI, ActionListener, KeyListener {
 
-  private DungeonInterface dungeonGame;
+  private ReadOnlyModel dungeonGame;
   private IView view;
 
-  public GameControllerGUI(DungeonInterface model, IView view) {
+  public GameControllerGUI(ReadOnlyModel model, IView view) {
     if (model == null || view == null) {
       throw new IllegalArgumentException("Cannot be null");
     }
@@ -33,6 +34,8 @@ public class GameControllerGUI implements GameControllerI, ActionListener, KeyLi
   public void playGame() {
     //todo
     view.setListeners(this, this);
+    view.generateGameView(dungeonGame); //todo
+
 
 
   }
@@ -52,6 +55,7 @@ public class GameControllerGUI implements GameControllerI, ActionListener, KeyLi
         break;
       case "Start Button":
         this.beginGame();
+
         //System.out.println("INBETWEEN");
         //System.out.println(view.getMazeType());
         //System.out.println("NOW?" + view.getMazeType());
@@ -66,18 +70,22 @@ public class GameControllerGUI implements GameControllerI, ActionListener, KeyLi
         view.resetFocus();
         break;
       case "Up Button":
+        view.setListeners(this, this);
         this.movePlayer(DirectionEnum.NORTH);
         view.resetFocus();
         break;
       case "Left Button":
+        view.setListeners(this, this);
         this.movePlayer(DirectionEnum.WEST);
         view.resetFocus();
         break;
       case "Down Button":
+        view.setListeners(this, this);
         this.movePlayer(DirectionEnum.SOUTH);
         view.resetFocus();
         break;
       case "Right Button":
+        view.setListeners(this, this);
         this.movePlayer(DirectionEnum.EAST);
         view.resetFocus();
         break;
@@ -135,15 +143,14 @@ public class GameControllerGUI implements GameControllerI, ActionListener, KeyLi
    */
   public void movePlayer(DirectionEnum dir) {
     String moveMessage = String.valueOf(dungeonGame.makeMove(dir));
-    int pLayerLocRow = dungeonGame.getPlayer().getCurrentLocation().getKey();
-    int pLayerLocCol = dungeonGame.getPlayer().getCurrentLocation().getValue();
     this.view.getPromptPane().setText(moveMessage);
 
     this.view.removeAllListeners(this);
 
     //this.view.setChangingMark(dungeonGame.getAdajacencyList()), dungeonGame.smell(),
             //dungeonGame.getPlayer().getCurrentLocation();
-    view.refreshView(dungeonGame.getNumberOfRows(), dungeonGame.getNumberOfColumns());
+    view.refreshView(this.dungeonGame);
+    System.out.println(this.dungeonGame);
   }
 
 
@@ -162,7 +169,7 @@ public class GameControllerGUI implements GameControllerI, ActionListener, KeyLi
     this.view.removeAllListeners(this);
 
     //todo CHECK WHETHER arrow refresh is required
-    view.refreshView(dungeonGame.getNumberOfRows(), dungeonGame.getNumberOfColumns());
+    view.refreshView(this.dungeonGame);
   }
 
 
@@ -182,7 +189,7 @@ public class GameControllerGUI implements GameControllerI, ActionListener, KeyLi
 
     //todo check whether refresh is required
 
-    view.refreshView(dungeonGame.getNumberOfRows(), dungeonGame.getNumberOfColumns());
+    view.refreshView(this.dungeonGame);
 
 
   }
@@ -198,6 +205,7 @@ public class GameControllerGUI implements GameControllerI, ActionListener, KeyLi
               view.getGameSetting().getMazeTreasure(),
               view.getGameSetting().getMazeMonster(),
               true);
+      //this.dungeonGame.enterPlayer();
 
       //this.view.setUnchangedMark(dungeonGame.getTreasureList(),dungeonGame.getArrowList(),
               //dungeonGame.getMonsterList());
@@ -209,22 +217,23 @@ public class GameControllerGUI implements GameControllerI, ActionListener, KeyLi
               view.getGameSetting().getMazeTreasure(),
               view.getGameSetting().getMazeMonster(),
               true);
+      //this.dungeonGame.enterPlayer();
 
       //this.view.setUnchangedMark(dungeonGame.getTreasureList(),dungeonGame.getArrowList(),
               //dungeonGame.getMonsterList());
     }
 
-    this.view.generateGameView(view.getGameSetting().getMazeRow(),
-            view.getGameSetting().getMazeCol());
+
+    this.view.generateGameView(this.dungeonGame);
     // this.view.setController(this);
-    this.printCurrentInfo("");
+//    this.printCurrentInfo("");
 
 //    this.view.setChangingMark(maze.getRoomList(), maze.smell(),
 //        maze.getPlayerLocation(), maze.getPlayerQueue());
-    this.view.setChangingMark(dungeonGame.getPlayer().getCurrentLocation());
+//    this.view.setChangingMark(dungeonGame.getPlayer().getCurrentLocation());
 
-    this.view.refreshView(view.getGameSetting().getMazeRow(),
-            view.getGameSetting().getMazeCol());
+    dungeonGame.enterPlayer(); //todo
+    this.view.refreshView(this.dungeonGame);
   }
 
   /**
@@ -234,7 +243,7 @@ public class GameControllerGUI implements GameControllerI, ActionListener, KeyLi
    */
   public void printCurrentInfo(String cur) {
     int i = 0;
-    dungeonGame.enterPlayer();  //check todo
+//    dungeonGame.enterPlayer();  //check todo
     String curLoc =
             dungeonGame.getPlayerDesc()+" Doors Lead to  :" +
                      dungeonGame.getPossibleMoves(dungeonGame.getPlayer().getCurrentLocation());

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import javax.swing.*;
+import model.dungeon.ReadOnlyModel;
 
 /**
  * The interface for the view class.
@@ -16,18 +17,15 @@ public interface IView {
   /**
    * Generate an initial game view.
    *
-   * @param row   the number of row of the maze
-   * @param col   the number of col of the maze
+
    */
-  void generateGameView(int row, int col);
+  void generateGameView(ReadOnlyModel newModel);
 
   /**
    * Refresh the game view.
    *
-   * @param row   the number of row of the maze
-   * @param col   the number of col of the maze
    */
-  void refreshView(int row, int col);
+  void refreshView(ReadOnlyModel newModel);
 
   /**
    * Get the maze type.
@@ -128,7 +126,7 @@ public interface IView {
 
   //TODO ask why this was commented
 //  void setChangingMark(List<Room> roomList, List<Boolean> danger,int playerLoc);
-  void setChangingMark(Entry<Integer, Integer> playerLoc);
+  //void setChangingMark(Entry<Integer, Integer> playerLoc);
 
 }
 
