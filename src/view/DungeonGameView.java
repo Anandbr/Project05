@@ -54,6 +54,7 @@ public class DungeonGameView extends JFrame implements IView {
   private JTextField directionInput;
   private JTextField distanceInput;
   private JTextField pickUpInput;
+  private JButton pickUpButton;
   private MenuView menu;
   private JPanel mazeMap;
   private JTextPane promptPane;
@@ -90,10 +91,17 @@ public class DungeonGameView extends JFrame implements IView {
     reStartButton = new JButton("RESTART");
     reStartButton.setActionCommand("Restart Button");
 
+
+
     shootButton = new JButton("press S to shoot");
     ImageIcon uk = new ImageIcon("image\\target.png");
     this.shootButton.setIcon(uk);
     shootButton.setActionCommand("Shoot Button");
+
+    pickUpButton = new JButton("press P to pickup");
+//    ImageIcon uk = new ImageIcon("image\\target.png");
+//    this.shootButton.setIcon(uk);
+    pickUpButton.setActionCommand("PickUp Button");
 
     upButton = new BasicArrowButton(BasicArrowButton.NORTH);
     upButton.setActionCommand("Up Button");
@@ -104,11 +112,13 @@ public class DungeonGameView extends JFrame implements IView {
     rightButton = new BasicArrowButton(BasicArrowButton.EAST);
     rightButton.setActionCommand("Right Button");
 
-    controlPanel = new JPanel(new GridLayout(3, 1));
+    controlPanel = new JPanel(new GridLayout(4, 2));
 
     // first panel: shoot input and start/restart
-    JPanel shootPanel = new JPanel(new GridLayout(3, 2));
+    JPanel shootPanel = new JPanel(new GridLayout(4, 2));
     shootPanel.add(new Label("Shoot Direction(N, W, S, E)"));
+
+
     // the direction text field
     directionInput = new JTextField(10);
     shootPanel.add(directionInput);
@@ -116,8 +126,20 @@ public class DungeonGameView extends JFrame implements IView {
     // the distance text field
     distanceInput = new JTextField(10);
     shootPanel.add(distanceInput);
+
+    //
+    pickUpInput = new JTextField(10);
+    shootPanel.add(new Label("Pickup (D, R, S, A, ALL)"));
+
+
+    shootPanel.add(pickUpInput);
+
+    //
+
+
     shootPanel.add(startButton);
     shootPanel.add(reStartButton);
+
     // second panel: move button
     JPanel movePanel = new JPanel(new GridLayout(2, 3));
     movePanel.add(new Label(""));
@@ -129,6 +151,7 @@ public class DungeonGameView extends JFrame implements IView {
     // add to controlPanel
     controlPanel.add(shootPanel);
     controlPanel.add(shootButton);
+    controlPanel.add(pickUpButton);
     controlPanel.add(movePanel);
     this.add(controlPanel);
 
