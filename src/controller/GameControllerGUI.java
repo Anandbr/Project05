@@ -142,15 +142,23 @@ public class GameControllerGUI implements GameControllerI, ActionListener, KeyLi
    * @param dir  specified direction, one of N, E, S, W
    */
   public void movePlayer(DirectionEnum dir) {
-    String moveMessage = String.valueOf(dungeonGame.makeMove(dir));
-    this.view.getPromptPane().setText(moveMessage);
+    try{
+      String moveMessage = String.valueOf(dungeonGame.makeMove(dir));
+      this.view.getPromptPane().setText(moveMessage);
+      this.view.removeAllListeners(this);
+      view.refreshView(this.dungeonGame);
+    }
+    catch (Exception e) {
+      this.view.getPromptPane().setText(e.getMessage());
+      this.view.removeAllListeners(this);
+      view.refreshView(this.dungeonGame);
+    }
 
-    this.view.removeAllListeners(this);
 
     //this.view.setChangingMark(dungeonGame.getAdajacencyList()), dungeonGame.smell(),
             //dungeonGame.getPlayer().getCurrentLocation();
-    view.refreshView(this.dungeonGame);
-    System.out.println(this.dungeonGame);
+
+//    System.out.println(this.dungeonGame);
   }
 
 
@@ -204,7 +212,7 @@ public class GameControllerGUI implements GameControllerI, ActionListener, KeyLi
               view.getGameSetting().getInterconnect(),
               view.getGameSetting().getMazeTreasure(),
               view.getGameSetting().getMazeMonster(),
-              true);
+              false);
       //this.dungeonGame.enterPlayer();
 
       //this.view.setUnchangedMark(dungeonGame.getTreasureList(),dungeonGame.getArrowList(),
@@ -216,14 +224,14 @@ public class GameControllerGUI implements GameControllerI, ActionListener, KeyLi
               view.getGameSetting().getInterconnect(),
               view.getGameSetting().getMazeTreasure(),
               view.getGameSetting().getMazeMonster(),
-              true);
+              false);
       //this.dungeonGame.enterPlayer();
 
       //this.view.setUnchangedMark(dungeonGame.getTreasureList(),dungeonGame.getArrowList(),
               //dungeonGame.getMonsterList());
     }
 
-
+    dungeonGame.enterPlayer();
     this.view.generateGameView(this.dungeonGame);
     // this.view.setController(this);
 //    this.printCurrentInfo("");
@@ -232,7 +240,7 @@ public class GameControllerGUI implements GameControllerI, ActionListener, KeyLi
 //        maze.getPlayerLocation(), maze.getPlayerQueue());
 //    this.view.setChangingMark(dungeonGame.getPlayer().getCurrentLocation());
 
-    dungeonGame.enterPlayer(); //todo
+     //todo
     this.view.refreshView(this.dungeonGame);
   }
 

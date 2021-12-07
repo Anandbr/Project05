@@ -11,7 +11,7 @@ public class Driver {
 
       System.out.println("GUI MODE");
       // Create the view
-    DungeonInterface dungeonModel = new UnWrappedDungeon(3,3,0,100,2,false);
+    DungeonInterface dungeonModel = new UnWrappedDungeon(4,4,0,100,2,false);
     IView view = new DungeonGameView("Hunt the Wumpus!", dungeonModel);
 
     GameControllerI c = new GameControllerGUI(dungeonModel, view);

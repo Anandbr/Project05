@@ -408,7 +408,6 @@ public class DungeonGameView extends JFrame implements IView {
     for (KeyListener k : this.getKeyListeners()) {
       this.removeKeyListener(k);
     }
-    this.downButton.removeActionListener(clicks);
     this.startButton.removeActionListener(clicks);
     this.upButton.removeActionListener(clicks);
     this.leftButton.removeActionListener(clicks);
