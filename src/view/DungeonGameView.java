@@ -217,7 +217,7 @@ public class DungeonGameView extends JFrame implements IView {
 
         if (i == (newModel.getPlayer().getCurrentLocation().getKey()) &&
             j == (newModel.getPlayer().getCurrentLocation().getValue())) { //todo why is player loc out of boundary?
-          panel.add(this.getImageLabel("player", 60, 60));
+          panel.add(this.getImageLabel("player", 20, 20));
         }
 
         Map.Entry<Integer,Integer> tempLoc = new AbstractMap.SimpleEntry<>(i,j);
@@ -225,36 +225,36 @@ public class DungeonGameView extends JFrame implements IView {
         if(newModel.getVisitedList().get(tempLoc)) {
 
           if (newModel.getMonsterList().get(tempLoc) != null) {
-            panel.add(this.getImageLabel("wumpus", 60, 60));
+            panel.add(this.getImageLabel("otyugh", 10, 10));
           }
 
           if(newModel.getArrowList().get(tempLoc).get(ArrowEnum.CROOKED_ARROW) > 0) {
-            panel.add(this.getImageLabel("arrow", 60, 60));
+            panel.add(this.getImageLabel("arrow-white", 10, 10));
 
           }
 
           if(newModel.getTreasureList().get(tempLoc).get(TreasureEnum.DIAMOND) > 0) {
-            panel.add(this.getImageLabel("diamond", 60, 60));
+            panel.add(this.getImageLabel("diamond", 10, 10));
 
           }
 
           if(newModel.getTreasureList().get(tempLoc).get(TreasureEnum.SAPPHIRE) > 0) {
-            panel.add(this.getImageLabel("sapphire", 60, 60));
+            panel.add(this.getImageLabel("sapphire", 10, 10));
 
           }
 
           if(newModel.getTreasureList().get(tempLoc).get(TreasureEnum.RUBY) > 0) {
-            panel.add(this.getImageLabel("ruby", 60, 60));
+            panel.add(this.getImageLabel("ruby", 10, 10));
 
           }
 
           //TODO how to add smell
 
-          panel.add(this.getImageLabel(this.setRoomImage(tempLoc,newModel), 100, 100));
+          panel.add(this.getImageLabel(this.setRoomImage(tempLoc,newModel), 150, 150));
 
 
           } else {
-            panel.add(this.getImageLabel("blank", 100, 100));
+            panel.add(this.getImageLabel("blank", 150, 150));
           }
           panel.revalidate();
         }
