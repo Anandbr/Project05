@@ -25,6 +25,8 @@ public interface IView {
    * Refresh the game view.
    *
    */
+  void refreshView(ReadOnlyModel newModel, int smell);
+
   void refreshView(ReadOnlyModel newModel);
 
   /**

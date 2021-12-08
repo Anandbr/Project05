@@ -1,10 +1,12 @@
 package controller;
 
+import com.sun.source.tree.IfTree;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import java.util.Locale;
 import model.dungeon.DungeonInterface;
 import model.dungeon.PlayerStatus;
 import model.dungeon.ReadOnlyModel;
@@ -47,6 +49,7 @@ public class GameControllerGUI implements GameControllerI, ActionListener, KeyLi
     switch (e.getActionCommand()) {
       // read from the input text field
       case "Shoot Button":
+        view.setListeners(this, this);
         String dir = view.getDirectionInput();
         int dis = Integer.parseInt(view.getDistanceInput());
         this.shootArrow(DirectionEnum.valueOf(dir), dis);
@@ -89,7 +92,8 @@ public class GameControllerGUI implements GameControllerI, ActionListener, KeyLi
         this.movePlayer(DirectionEnum.EAST);
         view.resetFocus();
         break;
-      case "PickUp Button":
+      case "Pickup Button":
+        view.setListeners(this, this);
         String option = view.getPickUpInput();
         this.pickUpTreasure(option);
         view.clearInputString();
@@ -103,9 +107,11 @@ public class GameControllerGUI implements GameControllerI, ActionListener, KeyLi
 
   @Override
   public void keyTyped(KeyEvent e) {
+//    view.setListeners(this, this);
     if (e.getKeyChar() == 'd') {
       System.out.println("Hi");
     }
+//    view.resetFocus();
   }
 
   @Override
@@ -119,17 +125,24 @@ public class GameControllerGUI implements GameControllerI, ActionListener, KeyLi
   public void keyReleased(KeyEvent e) {
     switch (e.getKeyCode()) {
       case KeyEvent.VK_UP:
-        //System.out.println("2nd");
+        view.setListeners(this, this);
         this.movePlayer(DirectionEnum.NORTH);
+        view.resetFocus();
         return;
       case KeyEvent.VK_DOWN:
+        view.setListeners(this, this);
         this.movePlayer(DirectionEnum.SOUTH);
+        view.resetFocus();
         return;
       case KeyEvent.VK_LEFT:
+        view.setListeners(this, this);
         this.movePlayer(DirectionEnum.WEST);
+        view.resetFocus();
         return;
       case KeyEvent.VK_RIGHT:
+        view.setListeners(this, this);
         this.movePlayer(DirectionEnum.EAST);
+        view.resetFocus();
         return;
       default:
         throw new IllegalStateException("Error: Unknown button");
@@ -142,16 +155,27 @@ public class GameControllerGUI implements GameControllerI, ActionListener, KeyLi
    * @param dir  specified direction, one of N, E, S, W
    */
   public void movePlayer(DirectionEnum dir) {
+    int smell = 0;
     try{
       String moveMessage = String.valueOf(dungeonGame.makeMove(dir));
-      this.view.getPromptPane().setText(moveMessage);
+      String playerMessage = String.valueOf(dungeonGame.getPlayerDesc());
+      String desc = moveMessage + playerMessage;
+      if (moveMessage.toLowerCase().contains("something smells terrible")) {
+        smell = 2;
+      }
+      else if (moveMessage.toLowerCase().contains("something smells")) {
+        smell = 1;
+      }
+
+
+      this.view.getPromptPane().setText(desc);
       this.view.removeAllListeners(this);
-      view.refreshView(this.dungeonGame);
+      view.refreshView(this.dungeonGame, smell);
     }
     catch (Exception e) {
       this.view.getPromptPane().setText(e.getMessage());
       this.view.removeAllListeners(this);
-      view.refreshView(this.dungeonGame);
+      view.refreshView(this.dungeonGame, smell);
     }
 
 
@@ -232,6 +256,8 @@ public class GameControllerGUI implements GameControllerI, ActionListener, KeyLi
     }
 
     dungeonGame.enterPlayer();
+    String moveMessage =  String.valueOf(dungeonGame.getPlayerDesc());
+
     this.view.generateGameView(this.dungeonGame);
     // this.view.setController(this);
 //    this.printCurrentInfo("");
@@ -242,6 +268,7 @@ public class GameControllerGUI implements GameControllerI, ActionListener, KeyLi
 
      //todo
     this.view.refreshView(this.dungeonGame);
+    this.view.getPromptPane().setText(moveMessage);
   }
 
   /**

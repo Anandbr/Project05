@@ -1,5 +1,6 @@
 package view;
 
+import java.awt.event.KeyEvent;
 import java.util.Map.Entry;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -74,15 +75,15 @@ public class DungeonGameView extends JFrame implements IView {
   public DungeonGameView(String caption, ReadOnlyModel m) {
     super(caption);
     model = m;
-    setSize(500, 300);
-    setLocation(200, 200);
+    setSize(500, 1000);
+    setLocation(500, 1000);
     this.menu = new MenuView();
     setJMenuBar(menu);
     setFocusable(true);
 
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-    this.playerLabel = this.getImageLabel("player", 60, 60);
+    this.playerLabel = this.getImageLabel("player", 20, 20);
 
     startButton = new JButton("START GAME");
     startButton.setActionCommand("Start Button");
@@ -130,6 +131,7 @@ public class DungeonGameView extends JFrame implements IView {
     //
     pickUpInput = new JTextField(10);
     shootPanel.add(new Label("Pickup (D, R, S, A, ALL)"));
+    pickUpButton.setActionCommand("Pickup Button");
 
 
     shootPanel.add(pickUpInput);
@@ -155,7 +157,6 @@ public class DungeonGameView extends JFrame implements IView {
     controlPanel.add(movePanel);
     this.add(controlPanel);
 
-    //Todo add pickup panel
 
     pack();
     setVisible(true);
@@ -182,7 +183,7 @@ public class DungeonGameView extends JFrame implements IView {
         JPanel panel = new JPanel();
         LayoutManager overlay = new OverlayLayout(panel);
         panel.setLayout(overlay);
-        panel.add(this.getImageLabel("blank", 100, 100));
+        panel.add(this.getImageLabel("blank", 500, 1000));
         this.mazeMap.add(panel);
 
       }
@@ -204,6 +205,11 @@ public class DungeonGameView extends JFrame implements IView {
 
   @Override
   public void refreshView(ReadOnlyModel newModel) {
+    refreshView(newModel, 0);
+  }
+
+  @Override
+  public void refreshView(ReadOnlyModel newModel, int smell) {
     //System.out.println(maze.getPlayerLocation());
     //System.out.println(maze.getPossibleStep());
 
@@ -218,6 +224,13 @@ public class DungeonGameView extends JFrame implements IView {
         if (i == (newModel.getPlayer().getCurrentLocation().getKey()) &&
             j == (newModel.getPlayer().getCurrentLocation().getValue())) { //todo why is player loc out of boundary?
           panel.add(this.getImageLabel("player", 20, 20));
+          if (smell == 1) {
+            panel.add(this.getImageLabel("stench01", 10, 10));
+          }
+
+          if (smell == 2) {
+            panel.add(this.getImageLabel("stench02", 10, 10));
+          }
         }
 
         Map.Entry<Integer,Integer> tempLoc = new AbstractMap.SimpleEntry<>(i,j);
@@ -248,13 +261,13 @@ public class DungeonGameView extends JFrame implements IView {
 
           }
 
-          //TODO how to add smell
 
-          panel.add(this.getImageLabel(this.setRoomImage(tempLoc,newModel), 150, 150));
+
+          panel.add(this.getImageLabel(this.setRoomImage(tempLoc,newModel), 500, 1000));
 
 
           } else {
-            panel.add(this.getImageLabel("blank", 150, 150));
+            panel.add(this.getImageLabel("blank", 500, 1000));
           }
           panel.revalidate();
         }
@@ -388,6 +401,7 @@ public class DungeonGameView extends JFrame implements IView {
     this.downButton.addActionListener(clicks);
     this.rightButton.addActionListener(clicks);
     this.shootButton.addActionListener(clicks);
+    this.pickUpButton.addActionListener(clicks);
     this.directionInput.addActionListener(clicks);
     this.distanceInput.addActionListener(clicks);
   }
@@ -414,6 +428,7 @@ public class DungeonGameView extends JFrame implements IView {
     this.downButton.removeActionListener(clicks);
     this.rightButton.removeActionListener(clicks);
     this.shootButton.removeActionListener(clicks);
+    this.pickUpButton.removeActionListener(clicks);
     this.directionInput.removeActionListener(clicks);
     this.distanceInput.removeActionListener(clicks);
   }
