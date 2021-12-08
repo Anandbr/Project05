@@ -45,6 +45,8 @@ public class DungeonGameView extends JFrame implements IView {
   private static final long serialVersionUID = 5883479994622814210L;
 
   private JLabel playerLabel;
+  private JButton buttonCancel;
+  private JPanel shootPane;
   private JButton shootButton;
   private JButton startButton;
   private JButton reStartButton;
@@ -78,6 +80,7 @@ public class DungeonGameView extends JFrame implements IView {
     setSize(500, 1000);
     setLocation(500, 1000);
     this.menu = new MenuView();
+
     setJMenuBar(menu);
     setFocusable(true);
 
@@ -94,15 +97,17 @@ public class DungeonGameView extends JFrame implements IView {
 
 
 
-    shootButton = new JButton("press S to shoot");
-    ImageIcon uk = new ImageIcon("image\\target.png");
-    this.shootButton.setIcon(uk);
+    shootButton = new JButton("SHOOT");
+//    ImageIcon uk = new ImageIcon("image\\target.png");
+//    this.shootButton.setIcon(uk);
     shootButton.setActionCommand("Shoot Button");
+    this.add(shootButton);
 
-    pickUpButton = new JButton("press P to pickup");
+    pickUpButton = new JButton("Pickup");
 //    ImageIcon uk = new ImageIcon("image\\target.png");
 //    this.shootButton.setIcon(uk);
     pickUpButton.setActionCommand("PickUp Button");
+    this.add(pickUpButton);
 
     upButton = new BasicArrowButton(BasicArrowButton.NORTH);
     upButton.setActionCommand("Up Button");
@@ -113,54 +118,72 @@ public class DungeonGameView extends JFrame implements IView {
     rightButton = new BasicArrowButton(BasicArrowButton.EAST);
     rightButton.setActionCommand("Right Button");
 
-    controlPanel = new JPanel(new GridLayout(4, 2));
+    controlPanel = new JPanel(new GridLayout(1, 3));
 
     // first panel: shoot input and start/restart
-    JPanel shootPanel = new JPanel(new GridLayout(4, 2));
+    JPanel shootPanel = new JPanel(new GridLayout(7, 3));
     shootPanel.add(new Label("Shoot Direction(N, W, S, E)"));
 
 
     // the direction text field
     directionInput = new JTextField(10);
     shootPanel.add(directionInput);
+    shootPanel.add(new Label(""));
     shootPanel.add(new Label("Shoot Distance"));
+
     // the distance text field
     distanceInput = new JTextField(10);
     shootPanel.add(distanceInput);
+    shootPanel.add(new Label(""));
 
     //
     pickUpInput = new JTextField(10);
     shootPanel.add(new Label("Pickup (D, R, S, A, ALL)"));
-    pickUpButton.setActionCommand("Pickup Button");
+
+//    pickUpButton.setActionCommand("Pickup Button");
 
 
     shootPanel.add(pickUpInput);
+    shootPanel.add(new Label(""));
 
     //
 
 
     shootPanel.add(startButton);
     shootPanel.add(reStartButton);
+    shootPanel.add(new Label(""));
+    shootPanel.add(shootButton);
+    shootPanel.add(pickUpButton);
+    shootPanel.add(new Label(""));
+
+//    JPanel buttonPanel = new JPanel(new GridLayout(1, 2));
+//    buttonPanel.add(shootButton);
+//    buttonPanel.add(pickUpButton);
 
     // second panel: move button
-    JPanel movePanel = new JPanel(new GridLayout(2, 3));
-    movePanel.add(new Label(""));
-    movePanel.add(upButton);
-    movePanel.add(new Label(""));
-    movePanel.add(leftButton);
-    movePanel.add(downButton);
-    movePanel.add(rightButton);
+//    JPanel movePanel = new JPanel(new GridLayout(2, 3));
+    shootPanel.add(new Label(""));
+    shootPanel.add(upButton);
+    shootPanel.add(new Label(""));
+    shootPanel.add(leftButton);
+    shootPanel.add(downButton);
+    shootPanel.add(rightButton);
     // add to controlPanel
     controlPanel.add(shootPanel);
-    controlPanel.add(shootButton);
-    controlPanel.add(pickUpButton);
-    controlPanel.add(movePanel);
+//    controlPanel.add(buttonPanel);
+//    controlPanel.add(shootButton);
+//    controlPanel.add(pickUpButton);
+//    controlPanel.add(movePanel);
     this.add(controlPanel);
 
 
     pack();
     setVisible(true);
 
+  }
+
+  private void onCancel() {
+    dispose();
   }
 
   @Override
@@ -275,13 +298,13 @@ public class DungeonGameView extends JFrame implements IView {
 
     this.mazeMap.getParent().revalidate();
     pack();
-    GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-    Rectangle bounds = env.getMaximumWindowBounds();
-    int width = Math.min(getWidth(), bounds.width);
-    int height = Math.min(getHeight(), bounds.height);
-    setSize(new Dimension(width, height));
-    revalidate();
-    repaint();
+//    GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+//    Rectangle bounds = env.getMaximumWindowBounds();
+//    int width = Math.min(getWidth(), bounds.width);
+//    int height = Math.min(getHeight(), bounds.height);
+//    setSize(new Dimension(width, height));
+//    revalidate();
+//    repaint();
   }
 
   /**
@@ -394,6 +417,9 @@ public class DungeonGameView extends JFrame implements IView {
   @Override
   public void setListeners(ActionListener clicks, KeyListener keys) {
     this.addKeyListener(keys);
+//    for (KeyListener k : this.getKeyListeners()) {
+//      this.addKeyListener(k);
+//    }
     this.startButton.addActionListener(clicks);
     this.reStartButton.addActionListener(clicks);
     this.upButton.addActionListener(clicks);
@@ -418,10 +444,10 @@ public class DungeonGameView extends JFrame implements IView {
   }
 
   @Override
-  public void removeAllListeners(ActionListener clicks) {
-    for (KeyListener k : this.getKeyListeners()) {
-      this.removeKeyListener(k);
-    }
+  public void removeAllListeners(ActionListener clicks, KeyListener keys) {
+//    for (KeyListener k : this.getKeyListeners()) {
+      this.removeKeyListener(keys);
+//    }
     this.startButton.removeActionListener(clicks);
     this.upButton.removeActionListener(clicks);
     this.leftButton.removeActionListener(clicks);

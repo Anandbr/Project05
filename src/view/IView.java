@@ -98,7 +98,7 @@ public interface IView {
    *
    * @param clicks the listener for the button clicks
    */
-  void removeAllListeners(ActionListener clicks);
+  void removeAllListeners(ActionListener clicks, KeyListener keys);
 
   /**
    * Clear the text field.

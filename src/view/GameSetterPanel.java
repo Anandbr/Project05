@@ -177,13 +177,16 @@ public class GameSetterPanel extends JDialog {
    * Setters for the number of rows of maze using user specified input.
    */
   public void setMazeRow() {
-    mazeRow = Integer.parseInt(rowInput.getText());
+    if (rowInput != null) {
+      mazeRow = Integer.parseInt(rowInput.getText());
+    }
   }
 
   /**
    * Setters for the number of cols of maze using user specified input.
    */
   public void setMazeCol() {
+    if (colInput != null)
     mazeCol = Integer.parseInt(colInput.getText());
   }
 
