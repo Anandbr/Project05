@@ -2,6 +2,7 @@ package view;
 
 import java.awt.event.KeyEvent;
 import java.util.Map.Entry;
+import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JButton;
@@ -11,6 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.ImageIcon;
 import javax.swing.JScrollPane;
 import javax.swing.OverlayLayout;
+import javax.swing.SwingConstants;
 import javax.swing.plaf.basic.BasicArrowButton;
 
 import java.awt.GridLayout;
@@ -61,7 +63,8 @@ public class DungeonGameView extends JFrame implements IView {
   private MenuView menu;
   private JPanel mazeMap;
   private JTextPane promptPane;
-  private JPanel controlPanel;
+//  private JPanel controlPanel;
+  private JPanel shootPanel;
   private Map.Entry<Integer, Integer> monsterLoc;
   private Map.Entry<Integer,Integer> treasureLoc;
   private Map.Entry<Integer,Integer> arrowLoc;
@@ -86,7 +89,7 @@ public class DungeonGameView extends JFrame implements IView {
 
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-    this.playerLabel = this.getImageLabel("player", 20, 20);
+    this.playerLabel = this.getImageLabel("player", 2, 2);
 
     startButton = new JButton("START GAME");
     startButton.setActionCommand("Start Button");
@@ -95,17 +98,11 @@ public class DungeonGameView extends JFrame implements IView {
     reStartButton = new JButton("RESTART");
     reStartButton.setActionCommand("Restart Button");
 
-
-
     shootButton = new JButton("SHOOT");
-//    ImageIcon uk = new ImageIcon("image\\target.png");
-//    this.shootButton.setIcon(uk);
     shootButton.setActionCommand("Shoot Button");
     this.add(shootButton);
 
     pickUpButton = new JButton("Pickup");
-//    ImageIcon uk = new ImageIcon("image\\target.png");
-//    this.shootButton.setIcon(uk);
     pickUpButton.setActionCommand("PickUp Button");
     this.add(pickUpButton);
 
@@ -118,64 +115,33 @@ public class DungeonGameView extends JFrame implements IView {
     rightButton = new BasicArrowButton(BasicArrowButton.EAST);
     rightButton.setActionCommand("Right Button");
 
-    controlPanel = new JPanel(new GridLayout(1, 3));
-
-    // first panel: shoot input and start/restart
-    JPanel shootPanel = new JPanel(new GridLayout(7, 3));
+    shootPanel = new JPanel(new GridLayout(7, 3));
     shootPanel.add(new Label("Shoot Direction(N, W, S, E)"));
 
-
-    // the direction text field
     directionInput = new JTextField(10);
     shootPanel.add(directionInput);
     shootPanel.add(new Label(""));
     shootPanel.add(new Label("Shoot Distance"));
 
-    // the distance text field
     distanceInput = new JTextField(10);
     shootPanel.add(distanceInput);
     shootPanel.add(new Label(""));
-
-    //
     pickUpInput = new JTextField(10);
     shootPanel.add(new Label("Pickup (D, R, S, A, ALL)"));
-
-//    pickUpButton.setActionCommand("Pickup Button");
-
-
     shootPanel.add(pickUpInput);
     shootPanel.add(new Label(""));
-
-    //
-
-
     shootPanel.add(startButton);
     shootPanel.add(reStartButton);
     shootPanel.add(new Label(""));
     shootPanel.add(shootButton);
     shootPanel.add(pickUpButton);
     shootPanel.add(new Label(""));
-
-//    JPanel buttonPanel = new JPanel(new GridLayout(1, 2));
-//    buttonPanel.add(shootButton);
-//    buttonPanel.add(pickUpButton);
-
-    // second panel: move button
-//    JPanel movePanel = new JPanel(new GridLayout(2, 3));
     shootPanel.add(new Label(""));
     shootPanel.add(upButton);
     shootPanel.add(new Label(""));
     shootPanel.add(leftButton);
     shootPanel.add(downButton);
     shootPanel.add(rightButton);
-    // add to controlPanel
-    controlPanel.add(shootPanel);
-//    controlPanel.add(buttonPanel);
-//    controlPanel.add(shootButton);
-//    controlPanel.add(pickUpButton);
-//    controlPanel.add(movePanel);
-    this.add(controlPanel);
-
 
     pack();
     setVisible(true);
@@ -195,18 +161,16 @@ public class DungeonGameView extends JFrame implements IView {
     JPanel base = new JPanel(gridBagLayout);
     this.mazeMap = new JPanel(new GridLayout(newModel.getNumberOfRows(), newModel.getNumberOfColumns()));
     gridBagLayout.setConstraints(this.mazeMap, gridBagConstraints);
-    base.add(controlPanel);
+    base.add(shootPanel);
 
     mazeMap.setBackground(Color.black);
-    //System.out.println(row);
-    //System.out.println(col);
 
     for (int i = 0; i < newModel.getNumberOfRows(); i++) {
       for (int j = 0; j < newModel.getNumberOfColumns(); j++) {
         JPanel panel = new JPanel();
         LayoutManager overlay = new OverlayLayout(panel);
         panel.setLayout(overlay);
-        panel.add(this.getImageLabel("blank", 500, 1000));
+        panel.add(this.getImageLabel("blank", 1000, 1000));
         this.mazeMap.add(panel);
 
       }
@@ -233,27 +197,25 @@ public class DungeonGameView extends JFrame implements IView {
 
   @Override
   public void refreshView(ReadOnlyModel newModel, int smell) {
-    //System.out.println(maze.getPlayerLocation());
-    //System.out.println(maze.getPossibleStep());
+
 
     this.promptPane.revalidate();
     for (int i = 0; i < newModel.getNumberOfRows(); i++) {
       for (int j = 0; j < newModel.getNumberOfColumns(); j++) {
         int loc = i * newModel.getNumberOfColumns() + j;
-//        JPanel panel = (JPanel) this.mazeMap.getComponentAt(i, j); //todo this is rendering null. need to see how to generate this panel
         JPanel panel = (JPanel) this.mazeMap.getComponent(loc);
         panel.removeAll();
 
         if (i == (newModel.getPlayer().getCurrentLocation().getKey()) &&
-            j == (newModel.getPlayer().getCurrentLocation().getValue())) { //todo why is player loc out of boundary?
-          panel.add(this.getImageLabel("player", 20, 20));
+            j == (newModel.getPlayer().getCurrentLocation().getValue())) {
+          panel.add(this.getImageLabel("player", 2, 2));
           if (smell == 1) {
             panel.add(this.getImageLabel("stench01", 10, 10));
           }
-
           if (smell == 2) {
             panel.add(this.getImageLabel("stench02", 10, 10));
           }
+
         }
 
         Map.Entry<Integer,Integer> tempLoc = new AbstractMap.SimpleEntry<>(i,j);
@@ -265,32 +227,31 @@ public class DungeonGameView extends JFrame implements IView {
           }
 
           if(newModel.getArrowList().get(tempLoc).get(ArrowEnum.CROOKED_ARROW) > 0) {
-            panel.add(this.getImageLabel("arrow-white", 10, 10));
+            panel.add(this.getImageLabel("arrow-white", 5, 5));
 
           }
 
           if(newModel.getTreasureList().get(tempLoc).get(TreasureEnum.DIAMOND) > 0) {
-            panel.add(this.getImageLabel("diamond", 10, 10));
+            panel.add(this.getImageLabel("diamond", 1, 1));
 
           }
 
           if(newModel.getTreasureList().get(tempLoc).get(TreasureEnum.SAPPHIRE) > 0) {
-            panel.add(this.getImageLabel("sapphire", 10, 10));
+            panel.add(this.getImageLabel("sapphire", 1, 1));
 
           }
 
           if(newModel.getTreasureList().get(tempLoc).get(TreasureEnum.RUBY) > 0) {
-            panel.add(this.getImageLabel("ruby", 10, 10));
+            panel.add(this.getImageLabel("ruby", 1, 1));
 
           }
 
 
 
-          panel.add(this.getImageLabel(this.setRoomImage(tempLoc,newModel), 500, 1000));
-
+          panel.add(this.getImageLabel(this.setRoomImage(tempLoc,newModel), 1000, 1000));
 
           } else {
-            panel.add(this.getImageLabel("blank", 500, 1000));
+            panel.add(this.getImageLabel("blank", 1000, 1000));
           }
           panel.revalidate();
         }
@@ -298,13 +259,6 @@ public class DungeonGameView extends JFrame implements IView {
 
     this.mazeMap.getParent().revalidate();
     pack();
-//    GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-//    Rectangle bounds = env.getMaximumWindowBounds();
-//    int width = Math.min(getWidth(), bounds.width);
-//    int height = Math.min(getHeight(), bounds.height);
-//    setSize(new Dimension(width, height));
-//    revalidate();
-//    repaint();
   }
 
   /**
@@ -321,6 +275,20 @@ public class DungeonGameView extends JFrame implements IView {
     ImageIcon icon = new ImageIcon(String.format(location, type));
     label.setSize(width, height);
     label.setIcon(icon);
+    switch (type) {
+      case "diamond" :
+        label.setBorder(BorderFactory.createEmptyBorder(0, 40, 40, 10));
+        break;
+      case "sapphire" :
+        label.setBorder(BorderFactory.createEmptyBorder(10, 40, 25, 10));
+        break;
+      case "ruby" :
+        label.setBorder(BorderFactory.createEmptyBorder(20, 40, 10, 10));
+        break;
+      case "arrow-white"  :
+        label.setBorder(BorderFactory.createEmptyBorder(12, 35, 10, 10));
+        break;
+    }
     return label;
   }
 
@@ -445,9 +413,7 @@ public class DungeonGameView extends JFrame implements IView {
 
   @Override
   public void removeAllListeners(ActionListener clicks, KeyListener keys) {
-//    for (KeyListener k : this.getKeyListeners()) {
       this.removeKeyListener(keys);
-//    }
     this.startButton.removeActionListener(clicks);
     this.upButton.removeActionListener(clicks);
     this.leftButton.removeActionListener(clicks);
@@ -464,13 +430,5 @@ public class DungeonGameView extends JFrame implements IView {
     directionInput.setText("");
     distanceInput.setText("");
   }
-
-  //todo this is setting the player location based on the input in game setting whereas the room row and col is being considered 3 * 3 in next todo. need to change that.
-  //@Override
-  //public void setChangingMark(Entry<Integer, Integer> playerLoc) {
-  //  this.playerLoc = playerLoc;
-
-  //}
-
 
 }

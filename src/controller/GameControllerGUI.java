@@ -1,13 +1,12 @@
 package controller;
 
-import com.sun.source.tree.IfTree;
+import com.sun.tools.jconsole.JConsoleContext;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import java.util.Locale;
-import model.dungeon.DungeonInterface;
 import model.dungeon.PlayerStatus;
 import model.dungeon.ReadOnlyModel;
 import model.dungeon.UnWrappedDungeon;
@@ -15,11 +14,11 @@ import model.dungeon.WrappedDungeon;
 import model.kruskal.DirectionEnum;
 import view.IView ;
 
-
 public class GameControllerGUI implements GameControllerI, ActionListener, KeyListener {
 
   private ReadOnlyModel dungeonGame;
-  private IView view;
+  private final IView view;
+  private int smell;
 
   public GameControllerGUI(ReadOnlyModel model, IView view) {
     if (model == null || view == null) {
@@ -27,53 +26,57 @@ public class GameControllerGUI implements GameControllerI, ActionListener, KeyLi
     }
     this.dungeonGame = model;
     this.view = view;
-    //todo
-
+    this.smell = 0;
   }
-
 
   @Override
   public void playGame() {
-    //todo
     view.setListeners(this, this);
-    view.generateGameView(dungeonGame); //todo
-
-
-
+    view.generateGameView(dungeonGame);
+    this.begin();
   }
-
-
 
   @Override
   public void actionPerformed(ActionEvent e) {
-//    if ((!dungeonGame.getPlayer().getPlayerStatus().equals(PlayerStatus.ALIVE))
-//        && ((!e.getActionCommand().equals("Start Button")) || (!e.getActionCommand().equals("Restart Button")))){
-//      this.view.removeAllListeners(this, this);
-//    }
-    if (!dungeonGame.getPlayer().getPlayerStatus().equals(PlayerStatus.ALIVE)) {
-      this.view.removeAllListeners(this, this);
-      return;
-    }
+    try {
       switch (e.getActionCommand()) {
-        // read from the input text field
 
         case "Shoot Button":
+          if (!dungeonGame.getPlayer().getPlayerStatus().equals(PlayerStatus.ALIVE)) {
+            this.view.removeAllListeners(this, this);
+            return;
+          }
           view.setListeners(this, this);
 
-          String dir = view.getDirectionInput();
+          String direction = view.getDirectionInput();
+          String dir = null;
+          switch (direction.toLowerCase()) {
+            case "n":
+            case "north":
+              dir = "NORTH";
+              break;
+            case "s":
+            case "south":
+              dir = "SOUTH";
+              break;
+            case "e":
+            case "east":
+              dir = "EAST";
+              break;
+            case "w":
+            case "west":
+              dir = "WEST";
+              break;
+            default:
+              break;
+          }
           int dis = Integer.parseInt(view.getDistanceInput());
           this.shootArrow(DirectionEnum.valueOf(dir), dis);
           view.clearInputString();
           view.resetFocus();
           break;
         case "Start Button":
-
           this.beginGame();
-
-          //System.out.println("INBETWEEN");
-          //System.out.println(view.getMazeType());
-          //System.out.println("NOW?" + view.getMazeType());
-          //System.out.println("INBETWEEN");
           view.resetFocus();
           break;
         case "Restart Button":
@@ -84,79 +87,117 @@ public class GameControllerGUI implements GameControllerI, ActionListener, KeyLi
           view.resetFocus();
           break;
         case "Up Button":
+          if (!dungeonGame.getPlayer().getPlayerStatus().equals(PlayerStatus.ALIVE)) {
+            this.view.removeAllListeners(this, this);
+            return;
+          }
           view.setListeners(this, this);
           this.movePlayer(DirectionEnum.NORTH);
           view.resetFocus();
           break;
         case "Left Button":
+          if (!dungeonGame.getPlayer().getPlayerStatus().equals(PlayerStatus.ALIVE)) {
+            this.view.removeAllListeners(this, this);
+            return;
+          }
           view.setListeners(this, this);
           this.movePlayer(DirectionEnum.WEST);
           view.resetFocus();
           break;
         case "Down Button":
+          if (!dungeonGame.getPlayer().getPlayerStatus().equals(PlayerStatus.ALIVE)) {
+            this.view.removeAllListeners(this, this);
+            return;
+          }
           view.setListeners(this, this);
           this.movePlayer(DirectionEnum.SOUTH);
           view.resetFocus();
           break;
         case "Right Button":
+          if (!dungeonGame.getPlayer().getPlayerStatus().equals(PlayerStatus.ALIVE)) {
+            this.view.removeAllListeners(this, this);
+            return;
+          }
           view.setListeners(this, this);
           this.movePlayer(DirectionEnum.EAST);
           view.resetFocus();
           break;
-        case "Pickup Button":
+        case "PickUp Button":
+          if (!dungeonGame.getPlayer().getPlayerStatus().equals(PlayerStatus.ALIVE)) {
+            this.view.removeAllListeners(this, this);
+            return;
+          }
           view.setListeners(this, this);
           String option = view.getPickUpInput();
-          this.pickUpTreasure(option);
+          String opt = null;
+          switch (option.toLowerCase()) {
+            case "a":
+            case "arrow":
+              opt = "CROOKED_ARROW";
+              break;
+            case "all":
+              opt = "ALL";
+              break;
+            case "d":
+            case "diamond":
+              opt = "DIAMOND";
+              break;
+            case "s":
+            case "sapphire":
+              opt = "SAPPHIRE";
+              break;
+            case "r":
+            case "ruby":
+              opt = "RUBY";
+              break;
+            default:
+              opt = option;
+          }
+          this.pickUpTreasure(opt);
           view.clearInputString();
           view.resetFocus();
           break;
 
         default:
           throw new IllegalStateException("Error: Unknown button");
+
       }
+    } catch(IllegalArgumentException error) {
+      this.view.getPromptPane().setText(error.getMessage());
+    }
     if (!dungeonGame.getPlayer().getPlayerStatus().equals(PlayerStatus.ALIVE)) {
       this.view.removeAllListeners(this, this);
     }
-//    }
   }
+
 
   @Override
   public void keyTyped(KeyEvent e) {
-//    view.setListeners(this, this);
-    if (e.getKeyChar() == 'd') {
-      System.out.println("Hi");
-    }
-//    view.resetFocus();
+    //do nothing
   }
 
   @Override
   public void keyPressed(KeyEvent e) {
-    if (e.getKeyChar() == 'f') {
-      System.out.println("NoNoNo");
-    }
+    //do nothing
   }
 
   @Override
   public void keyReleased(KeyEvent e) {
-    while(dungeonGame.getPlayer().getPlayerStatus().equals(PlayerStatus.ALIVE)) {
+    if (dungeonGame.getPlayer().getPlayerStatus().equals(PlayerStatus.ALIVE)) {
       switch (e.getKeyCode()) {
         case KeyEvent.VK_UP:
-//        view.resetFocus();
           this.movePlayer(DirectionEnum.NORTH);
           view.setListeners(this, this);
           return;
         case KeyEvent.VK_DOWN:
-//        view.resetFocus();
           this.movePlayer(DirectionEnum.SOUTH);
           view.setListeners(this, this);
           return;
         case KeyEvent.VK_LEFT:
-//        view.resetFocus();
           this.movePlayer(DirectionEnum.WEST);
           view.setListeners(this, this);
           return;
         case KeyEvent.VK_RIGHT:
-//        view.resetFocus();
           this.movePlayer(DirectionEnum.EAST);
           view.setListeners(this, this);
           return;
@@ -172,10 +213,11 @@ public class GameControllerGUI implements GameControllerI, ActionListener, KeyLi
    * @param dir  specified direction, one of N, E, S, W
    */
   public void movePlayer(DirectionEnum dir) {
+    smell = 0;
     if (!dungeonGame.getPlayer().getPlayerStatus().equals(PlayerStatus.ALIVE)) {
       this.view.removeAllListeners(this, this);
     }
-    int smell = 0;
+
     try{
       String moveMessage = String.valueOf(dungeonGame.makeMove(dir));
       String playerMessage = String.valueOf(dungeonGame.getPlayerDesc());
@@ -186,8 +228,6 @@ public class GameControllerGUI implements GameControllerI, ActionListener, KeyLi
       else if (moveMessage.toLowerCase().contains("something smells")) {
         smell = 1;
       }
-
-
       this.view.getPromptPane().setText(desc);
       this.view.removeAllListeners(this, this);
       view.refreshView(this.dungeonGame, smell);
@@ -197,14 +237,6 @@ public class GameControllerGUI implements GameControllerI, ActionListener, KeyLi
       this.view.removeAllListeners(this, this);
       view.refreshView(this.dungeonGame, smell);
     }
-
-
-
-
-    //this.view.setChangingMark(dungeonGame.getAdajacencyList()), dungeonGame.smell(),
-            //dungeonGame.getPlayer().getCurrentLocation();
-
-//    System.out.println(this.dungeonGame);
   }
 
 
@@ -217,16 +249,10 @@ public class GameControllerGUI implements GameControllerI, ActionListener, KeyLi
   public void shootArrow(DirectionEnum direction, int distance) {
     String shootArrowMessage = dungeonGame.shootArrow(direction, distance);
 
-
-
     this.view.getPromptPane().setText(shootArrowMessage);
     this.view.removeAllListeners(this, this);
-
-    //todo CHECK WHETHER arrow refresh is required
-    view.refreshView(this.dungeonGame);
+    view.refreshView(this.dungeonGame, smell);
   }
-
-
 
   /**
    * Make the player pickup treasure/Arrow and update prompt pane.
@@ -237,14 +263,10 @@ public class GameControllerGUI implements GameControllerI, ActionListener, KeyLi
   public void pickUpTreasure(String option) {
     String shootTreasureMessage = String.valueOf(dungeonGame.pickUpTreasure(option));
 
-
     this.view.getPromptPane().setText(shootTreasureMessage);
     this.view.removeAllListeners(this, this);
 
-    //todo check whether refresh is required
-
-    view.refreshView(this.dungeonGame);
-
+    view.refreshView(this.dungeonGame, smell);
 
   }
 
@@ -258,11 +280,7 @@ public class GameControllerGUI implements GameControllerI, ActionListener, KeyLi
               view.getGameSetting().getInterconnect(),
               view.getGameSetting().getMazeTreasure(),
               view.getGameSetting().getMazeMonster(),
-              false);
-      //this.dungeonGame.enterPlayer();
-
-      //this.view.setUnchangedMark(dungeonGame.getTreasureList(),dungeonGame.getArrowList(),
-              //dungeonGame.getMonsterList());
+              true);
     }
     else {
       this.dungeonGame = new UnWrappedDungeon(view.getGameSetting().getMazeRow(),
@@ -270,43 +288,23 @@ public class GameControllerGUI implements GameControllerI, ActionListener, KeyLi
               view.getGameSetting().getInterconnect(),
               view.getGameSetting().getMazeTreasure(),
               view.getGameSetting().getMazeMonster(),
-              false);
-      //this.dungeonGame.enterPlayer();
-
-      //this.view.setUnchangedMark(dungeonGame.getTreasureList(),dungeonGame.getArrowList(),
-              //dungeonGame.getMonsterList());
+              true);
     }
+    begin();
+  }
 
-    dungeonGame.enterPlayer();
+  public void begin() {
+    int smell = 0;
+    String message =  String.valueOf( dungeonGame.enterPlayer());
     String moveMessage =  String.valueOf(dungeonGame.getPlayerDesc());
-
     this.view.generateGameView(this.dungeonGame);
-    // this.view.setController(this);
-//    this.printCurrentInfo("");
-
-//    this.view.setChangingMark(maze.getRoomList(), maze.smell(),
-//        maze.getPlayerLocation(), maze.getPlayerQueue());
-//    this.view.setChangingMark(dungeonGame.getPlayer().getCurrentLocation());
-
-     //todo
-    this.view.refreshView(this.dungeonGame);
-    this.view.getPromptPane().setText(moveMessage);
+    if (message.toLowerCase().contains("something smells terrible")) {
+      smell = 2;
+    }
+    else if (message.toLowerCase().contains("something smells")) {
+      smell = 1;
+    }
+    this.view.refreshView(this.dungeonGame, smell);
+    this.view.getPromptPane().setText(message + "." + moveMessage);
   }
-
-  /**
-   * Update prompt pane with information of current user.
-   *
-   * @param cur previous information on prompt pane.
-   */
-  public void printCurrentInfo(String cur) {
-    int i = 0;
-//    dungeonGame.enterPlayer();  //check todo
-    String curLoc =
-            dungeonGame.getPlayerDesc()+" Doors Lead to  :" +
-                     dungeonGame.getPossibleMoves(dungeonGame.getPlayer().getCurrentLocation());
-
-    String prompt = "Move(click or type arrow keys) or Shoot(click) or PickUp(select option)\n";
-    this.view.getPromptPane().setText(cur + curLoc + prompt);
-  }
-
 }

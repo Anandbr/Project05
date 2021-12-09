@@ -556,9 +556,13 @@ public abstract class AbstractDungeon implements DungeonInterface {
 
     if (!opt.equals("ALL")) {
       if (!opt.equals("CROOKED_ARROW")) {
-        if (treasureLoc.get(player.getCurrentLocation()).get(TreasureEnum.valueOf(opt)) <= 0) {
-          throw new IllegalArgumentException(
-                  opt + " not available in present location");
+        try {
+          if (treasureLoc.get(player.getCurrentLocation()).get(TreasureEnum.valueOf(opt)) <= 0) {
+            throw new IllegalArgumentException(
+                opt + " not available in present location");
+          }
+        } catch(Exception err) {
+          throw new IllegalArgumentException(opt + " not available in present location");
         }
       }
       else {

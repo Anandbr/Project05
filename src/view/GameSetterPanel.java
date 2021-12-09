@@ -30,8 +30,6 @@ public class GameSetterPanel extends JDialog {
   private JTextField interconnectivityInput;
   private JTextField treasurePercentInput;
   private JTextField monsterInput;
-//  private JTextField treasureInput;
-//  private JButton pickup;
   private JCheckBox wrapping;
   private JLabel Interconnectivity;
   private int mazeRow;
