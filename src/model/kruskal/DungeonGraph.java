@@ -16,7 +16,7 @@ import java.util.TreeMap;
  *
  */
 
-public class LocationGraph implements LocationInterface {
+public class DungeonGraph implements GraphInterface {
 
   private final int rows;
   private final int columns;
@@ -36,7 +36,7 @@ public class LocationGraph implements LocationInterface {
    * @param numberOfRows : number of rows in the dungeon.
    * @param numberOfColumns : number of columns in the dungeon.
    * */
-  public LocationGraph(int numberOfRows, int numberOfColumns, boolean isWrapped) {
+  public DungeonGraph(int numberOfRows, int numberOfColumns, boolean isWrapped) {
     if (numberOfColumns < 0 || numberOfRows < 0) {
       throw  new IllegalArgumentException("Number of column or row can't be 0 or less than 0");
     }
@@ -402,7 +402,7 @@ public class LocationGraph implements LocationInterface {
 
   @Override
   public String toString() {
-    return "LocationGraph{" + "rows=" + rows + ", columns=" + columns
+    return "DungeonGraph{" + "rows=" + rows + ", columns=" + columns
             + ", isWrapped=" + isWrapped + ", adjList=" + adjList.toString() + '}';
   }
 

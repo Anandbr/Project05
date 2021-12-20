@@ -1,43 +1,36 @@
 package view;
 
-import java.awt.event.KeyEvent;
-import java.util.Map.Entry;
-import javax.swing.BorderFactory;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JButton;
-import javax.swing.JTextField;
-import javax.swing.JTextPane;
-import javax.swing.JPanel;
-import javax.swing.ImageIcon;
-import javax.swing.JScrollPane;
-import javax.swing.OverlayLayout;
-import javax.swing.SwingConstants;
-import javax.swing.plaf.basic.BasicArrowButton;
-
-import java.awt.GridLayout;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.LayoutManager;
-import java.awt.Label;
-import java.awt.Color;
-import java.awt.GraphicsEnvironment;
-import java.awt.Rectangle;
-import java.awt.Dimension;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyListener;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-
-import java.util.Map;
-import java.util.Set;
-
 import model.dungeon.ReadOnlyModel;
 import model.kruskal.ArrowEnum;
 import model.kruskal.DirectionEnum;
 import model.kruskal.TreasureEnum;
+
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Label;
+import java.awt.LayoutManager;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyListener;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.AbstractMap;
+import java.util.EnumSet;
+import java.util.Map;
+import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import javax.swing.OverlayLayout;
+import javax.swing.plaf.basic.BasicArrowButton;
 
 
 /**
@@ -46,7 +39,6 @@ import model.kruskal.TreasureEnum;
 public class DungeonGameView extends JFrame implements IView {
   private static final long serialVersionUID = 5883479994622814210L;
 
-  private JLabel playerLabel;
   private JButton buttonCancel;
   private JPanel shootPane;
   private JButton shootButton;
@@ -63,14 +55,7 @@ public class DungeonGameView extends JFrame implements IView {
   private MenuView menu;
   private JPanel mazeMap;
   private JTextPane promptPane;
-//  private JPanel controlPanel;
   private JPanel shootPanel;
-  private Map.Entry<Integer, Integer> monsterLoc;
-  private Map.Entry<Integer,Integer> treasureLoc;
-  private Map.Entry<Integer,Integer> arrowLoc;
-  private Set<Map.Entry<Integer, Integer>> roomList;
-  private Map.Entry<Integer, Integer> playerLoc;
-  private ReadOnlyModel model;
 
   /**
    * Constructor of GameView object. And initializes with basic control panel.
@@ -79,7 +64,6 @@ public class DungeonGameView extends JFrame implements IView {
    */
   public DungeonGameView(String caption, ReadOnlyModel m) {
     super(caption);
-    model = m;
     setSize(500, 1000);
     setLocation(500, 1000);
     this.menu = new MenuView();
@@ -89,7 +73,6 @@ public class DungeonGameView extends JFrame implements IView {
 
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-    this.playerLabel = this.getImageLabel("player", 2, 2);
 
     startButton = new JButton("START GAME");
     startButton.setActionCommand("Start Button");
@@ -159,7 +142,8 @@ public class DungeonGameView extends JFrame implements IView {
     GridBagConstraints gridBagConstraints = new GridBagConstraints();
     gridBagConstraints.fill = GridBagConstraints.VERTICAL;
     JPanel base = new JPanel(gridBagLayout);
-    this.mazeMap = new JPanel(new GridLayout(newModel.getNumberOfRows(), newModel.getNumberOfColumns()));
+    this.mazeMap = new JPanel(new GridLayout(newModel.getNumberOfRows(),
+        newModel.getNumberOfColumns()));
     gridBagLayout.setConstraints(this.mazeMap, gridBagConstraints);
     base.add(shootPanel);
 
@@ -170,6 +154,7 @@ public class DungeonGameView extends JFrame implements IView {
         JPanel panel = new JPanel();
         LayoutManager overlay = new OverlayLayout(panel);
         panel.setLayout(overlay);
+
         panel.add(this.getImageLabel("blank", 1000, 1000));
         this.mazeMap.add(panel);
 
@@ -191,11 +176,6 @@ public class DungeonGameView extends JFrame implements IView {
   }
 
   @Override
-  public void refreshView(ReadOnlyModel newModel) {
-    refreshView(newModel, 0);
-  }
-
-  @Override
   public void refreshView(ReadOnlyModel newModel, int smell) {
 
 
@@ -206,8 +186,8 @@ public class DungeonGameView extends JFrame implements IView {
         JPanel panel = (JPanel) this.mazeMap.getComponent(loc);
         panel.removeAll();
 
-        if (i == (newModel.getPlayer().getCurrentLocation().getKey()) &&
-            j == (newModel.getPlayer().getCurrentLocation().getValue())) {
+        if (i == (newModel.getPlayer().getCurrentLocation().getKey())
+            && j == (newModel.getPlayer().getCurrentLocation().getValue())) {
           panel.add(this.getImageLabel("player", 2, 2));
           if (smell == 1) {
             panel.add(this.getImageLabel("stench01", 10, 10));
@@ -220,42 +200,39 @@ public class DungeonGameView extends JFrame implements IView {
 
         Map.Entry<Integer,Integer> tempLoc = new AbstractMap.SimpleEntry<>(i,j);
 
-        if(newModel.getVisitedList().get(tempLoc)) {
+        if (newModel.getVisitedList().get(tempLoc)) {
 
           if (newModel.getMonsterList().get(tempLoc) != null) {
             panel.add(this.getImageLabel("otyugh", 10, 10));
           }
 
-          if(newModel.getArrowList().get(tempLoc).get(ArrowEnum.CROOKED_ARROW) > 0) {
+          if (newModel.getArrowList().get(tempLoc).get(ArrowEnum.CROOKED_ARROW) > 0) {
             panel.add(this.getImageLabel("arrow-white", 5, 5));
 
           }
 
-          if(newModel.getTreasureList().get(tempLoc).get(TreasureEnum.DIAMOND) > 0) {
+          if (newModel.getTreasureList().get(tempLoc).get(TreasureEnum.DIAMOND) > 0) {
             panel.add(this.getImageLabel("diamond", 1, 1));
 
           }
 
-          if(newModel.getTreasureList().get(tempLoc).get(TreasureEnum.SAPPHIRE) > 0) {
+          if (newModel.getTreasureList().get(tempLoc).get(TreasureEnum.SAPPHIRE) > 0) {
             panel.add(this.getImageLabel("sapphire", 1, 1));
 
           }
 
-          if(newModel.getTreasureList().get(tempLoc).get(TreasureEnum.RUBY) > 0) {
+          if (newModel.getTreasureList().get(tempLoc).get(TreasureEnum.RUBY) > 0) {
             panel.add(this.getImageLabel("ruby", 1, 1));
 
           }
-
-
-
           panel.add(this.getImageLabel(this.setRoomImage(tempLoc,newModel), 1000, 1000));
 
-          } else {
-            panel.add(this.getImageLabel("blank", 1000, 1000));
-          }
-          panel.revalidate();
+        } else {
+          panel.add(this.getImageLabel("blank", 1000, 1000));
         }
+        panel.revalidate();
       }
+    }
 
     this.mazeMap.getParent().revalidate();
     pack();
@@ -270,9 +247,18 @@ public class DungeonGameView extends JFrame implements IView {
    * @return a new label with image
    */
   private JLabel getImageLabel(String type, int width, int height) {
+
     JLabel label = new JLabel();
-    String location = "dungeon-images/color-cells/%s.png";
-    ImageIcon icon = new ImageIcon(String.format(location, type));
+    String location = "/images/%s.png";
+    String finalLocation = String.format(location, type);
+    ImageIcon icon = null;
+    try {
+      InputStream imageStream = getClass().getResourceAsStream(finalLocation);
+      Image image = ImageIO.read(imageStream);
+      icon = new ImageIcon(image);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
     label.setSize(width, height);
     label.setIcon(icon);
     switch (type) {
@@ -287,6 +273,8 @@ public class DungeonGameView extends JFrame implements IView {
         break;
       case "arrow-white"  :
         label.setBorder(BorderFactory.createEmptyBorder(12, 35, 10, 10));
+        break;
+      default:
         break;
     }
     return label;
@@ -303,52 +291,53 @@ public class DungeonGameView extends JFrame implements IView {
 
     EnumSet<DirectionEnum> directions = newModel.getPossibleMoves(tempLoc);
 
-    if (directions.contains(DirectionEnum.NORTH) && directions.contains(DirectionEnum.SOUTH) &&
-            !directions.contains(DirectionEnum.EAST) && !directions.contains(DirectionEnum.WEST)) {
+    if (directions.contains(DirectionEnum.NORTH) && directions.contains(DirectionEnum.SOUTH)
+        && !directions.contains(DirectionEnum.EAST) && !directions.contains(DirectionEnum.WEST)) {
       imageType = "NS";
-    } else if (directions.contains(DirectionEnum.NORTH) && directions.contains(DirectionEnum.EAST) &&
-            !directions.contains(DirectionEnum.SOUTH) && !directions.contains(DirectionEnum.WEST)) {
+    } else if (directions.contains(DirectionEnum.NORTH) && directions.contains(DirectionEnum.EAST)
+        && !directions.contains(DirectionEnum.SOUTH) && !directions.contains(DirectionEnum.WEST)) {
       imageType = "NE";
-    } else if (directions.contains(DirectionEnum.NORTH) && directions.contains(DirectionEnum.WEST) &&
-            !directions.contains(DirectionEnum.EAST) && !directions.contains(DirectionEnum.SOUTH)) {
+    } else if (directions.contains(DirectionEnum.NORTH) && directions.contains(DirectionEnum.WEST)
+        && !directions.contains(DirectionEnum.EAST) && !directions.contains(DirectionEnum.SOUTH)) {
       imageType = "NW";
-    } else if (directions.contains(DirectionEnum.EAST) && directions.contains(DirectionEnum.WEST) &&
-            !directions.contains(DirectionEnum.NORTH) && !directions.contains(DirectionEnum.SOUTH)) {
+    } else if (directions.contains(DirectionEnum.EAST) && directions.contains(DirectionEnum.WEST)
+        && !directions.contains(DirectionEnum.NORTH) && !directions.contains(DirectionEnum.SOUTH)) {
       imageType = "EW";
-    } else if (directions.contains(DirectionEnum.SOUTH) && directions.contains(DirectionEnum.EAST) &&
-            !directions.contains(DirectionEnum.NORTH) && !directions.contains(DirectionEnum.WEST)) {
+    } else if (directions.contains(DirectionEnum.SOUTH) && directions.contains(DirectionEnum.EAST)
+        && !directions.contains(DirectionEnum.NORTH) && !directions.contains(DirectionEnum.WEST)) {
       imageType = "SE";
-    } else if (directions.contains(DirectionEnum.SOUTH) && directions.contains(DirectionEnum.WEST) &&
-            !directions.contains(DirectionEnum.NORTH) && !directions.contains(DirectionEnum.EAST)) {
+    } else if (directions.contains(DirectionEnum.SOUTH) && directions.contains(DirectionEnum.WEST)
+        && !directions.contains(DirectionEnum.NORTH) && !directions.contains(DirectionEnum.EAST)) {
       imageType = "SW";
-    } else if (directions.contains(DirectionEnum.NORTH) && directions.contains(DirectionEnum.EAST) &&
-            directions.contains(DirectionEnum.WEST) && !directions.contains(DirectionEnum.SOUTH)) {
+    } else if (directions.contains(DirectionEnum.NORTH) && directions.contains(DirectionEnum.EAST)
+        && directions.contains(DirectionEnum.WEST) && !directions.contains(DirectionEnum.SOUTH)) {
       imageType = "NEW";
-    } else if (directions.contains(DirectionEnum.NORTH) && directions.contains(DirectionEnum.SOUTH) &&
-            directions.contains(DirectionEnum.EAST) && !directions.contains(DirectionEnum.WEST)) {
+    } else if (directions.contains(DirectionEnum.NORTH) && directions.contains(DirectionEnum.SOUTH)
+        && directions.contains(DirectionEnum.EAST) && !directions.contains(DirectionEnum.WEST)) {
       imageType = "NSE";
-    } else if (directions.contains(DirectionEnum.NORTH) && directions.contains(DirectionEnum.SOUTH) &&
-            directions.contains(DirectionEnum.WEST) && !directions.contains(DirectionEnum.EAST)) {
+    } else if (directions.contains(DirectionEnum.NORTH) && directions.contains(DirectionEnum.SOUTH)
+        && directions.contains(DirectionEnum.WEST) && !directions.contains(DirectionEnum.EAST)) {
       imageType = "NSW";
-    } else if (directions.contains(DirectionEnum.SOUTH) && directions.contains(DirectionEnum.EAST) &&
-            directions.contains(DirectionEnum.WEST) && !directions.contains(DirectionEnum.NORTH)) {
+    } else if (directions.contains(DirectionEnum.SOUTH) && directions.contains(DirectionEnum.EAST)
+        && directions.contains(DirectionEnum.WEST) && !directions.contains(DirectionEnum.NORTH)) {
       imageType = "SEW";
-    } else if (directions.contains(DirectionEnum.SOUTH) && !directions.contains(DirectionEnum.EAST) &&
-            !directions.contains(DirectionEnum.WEST) && !directions.contains(DirectionEnum.NORTH)) {
+    } else if (directions.contains(DirectionEnum.SOUTH) && !directions.contains(DirectionEnum.EAST)
+        && !directions.contains(DirectionEnum.WEST) && !directions.contains(DirectionEnum.NORTH)) {
       imageType = "S";
-    } else if (!directions.contains(DirectionEnum.SOUTH) && directions.contains(DirectionEnum.EAST) &&
-            !directions.contains(DirectionEnum.WEST) && !directions.contains(DirectionEnum.NORTH)) {
+    } else if (!directions.contains(DirectionEnum.SOUTH) && directions.contains(DirectionEnum.EAST)
+        && !directions.contains(DirectionEnum.WEST) && !directions.contains(DirectionEnum.NORTH)) {
       imageType = "E";
-    } else if (!directions.contains(DirectionEnum.SOUTH) && !directions.contains(DirectionEnum.EAST) &&
-            directions.contains(DirectionEnum.WEST) && !directions.contains(DirectionEnum.NORTH)) {
+    } else if (!directions.contains(DirectionEnum.SOUTH)
+        && !directions.contains(DirectionEnum.EAST)
+        && directions.contains(DirectionEnum.WEST) && !directions.contains(DirectionEnum.NORTH)) {
       imageType = "W";
-    } else if (!directions.contains(DirectionEnum.SOUTH) && !directions.contains(DirectionEnum.EAST) &&
-            !directions.contains(DirectionEnum.WEST) && directions.contains(DirectionEnum.NORTH)) {
+    } else if (!directions.contains(DirectionEnum.SOUTH)
+        && !directions.contains(DirectionEnum.EAST)
+        && !directions.contains(DirectionEnum.WEST) && directions.contains(DirectionEnum.NORTH)) {
       imageType = "N";
     } else {
       imageType = "NSEW";
     }
-
     return imageType;
   }
 
@@ -385,9 +374,6 @@ public class DungeonGameView extends JFrame implements IView {
   @Override
   public void setListeners(ActionListener clicks, KeyListener keys) {
     this.addKeyListener(keys);
-//    for (KeyListener k : this.getKeyListeners()) {
-//      this.addKeyListener(k);
-//    }
     this.startButton.addActionListener(clicks);
     this.reStartButton.addActionListener(clicks);
     this.upButton.addActionListener(clicks);
@@ -413,7 +399,7 @@ public class DungeonGameView extends JFrame implements IView {
 
   @Override
   public void removeAllListeners(ActionListener clicks, KeyListener keys) {
-      this.removeKeyListener(keys);
+    this.removeKeyListener(keys);
     this.startButton.removeActionListener(clicks);
     this.upButton.removeActionListener(clicks);
     this.leftButton.removeActionListener(clicks);

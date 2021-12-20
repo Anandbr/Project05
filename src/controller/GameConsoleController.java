@@ -52,13 +52,15 @@ public class GameConsoleController implements GameControllerI {
 
       out.append("Welcome to dungeon game !\n");
 
+
       out.append(dungeonGame.enterPlayer());
 
       while (dungeonGame.getPlayer().getPlayerStatus().equals(PlayerStatus.ALIVE)) {
         out.append(dungeonGame.getPlayerDesc());
 
         out.append("\nDoors lead to : ");
-        for (DirectionEnum direction : dungeonGame.getPossibleMoves(dungeonGame.getPlayer().getCurrentLocation())) {
+        for (DirectionEnum direction :
+            dungeonGame.getPossibleMoves(dungeonGame.getPlayer().getCurrentLocation())) {
           out.append(direction.toString()).append(" ");
         }
         out.append("\n\nShoot, Move or Pickup (S-M-P)?");
@@ -281,8 +283,4 @@ public class GameConsoleController implements GameControllerI {
       throw new IllegalStateException("cannot read from readable");
     }
   }
-
-
-
-
 }

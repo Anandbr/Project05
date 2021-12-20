@@ -9,7 +9,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
@@ -31,7 +30,6 @@ public class GameSetterPanel extends JDialog {
   private JTextField treasurePercentInput;
   private JTextField monsterInput;
   private JCheckBox wrapping;
-  private JLabel Interconnectivity;
   private int mazeRow;
   private int mazeCol;
   private double treasurePercent;
@@ -67,18 +65,18 @@ public class GameSetterPanel extends JDialog {
     });
 
     contentPane.registerKeyboardAction(new ActionListener() {
-                                         public void actionPerformed(ActionEvent e) {
-                                           onCancel();
-                                         }
-                                       }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-            JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+      public void actionPerformed(ActionEvent e) {
+        onCancel();
+      }
+      }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+        JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
   }
 
   private void onOK() {
     setMazeType();
     setMazeRow();
     setMazeCol();
-    setMazeWall();
+    setInterconnectivity();
     setTreasurePercent();
     setMazeMonster();
     dispose();
@@ -103,12 +101,7 @@ public class GameSetterPanel extends JDialog {
    * @return type of maze
    */
   public boolean getMazeType() {
-    if (wrapping.isSelected()) {
-      return true;
-    }
-    else return false;
-
-
+    return wrapping.isSelected();
   }
 
   /**
@@ -184,8 +177,9 @@ public class GameSetterPanel extends JDialog {
    * Setters for the number of cols of maze using user specified input.
    */
   public void setMazeCol() {
-    if (colInput != null)
-    mazeCol = Integer.parseInt(colInput.getText());
+    if (colInput != null) {
+      mazeCol = Integer.parseInt(colInput.getText());
+    }
   }
 
   /**
@@ -199,7 +193,7 @@ public class GameSetterPanel extends JDialog {
   /**
    * Setters for the interconnectivity of maze using user specified input.
    */
-  public void setMazeWall() {
+  public void setInterconnectivity() {
     interconnect = Integer.parseInt(interconnectivityInput.getText());
   }
 

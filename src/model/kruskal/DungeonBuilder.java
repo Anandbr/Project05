@@ -44,14 +44,14 @@ public class DungeonBuilder implements DungeonBuilderInterface {
 
 
   /**
-   * Modified Kruskal Algo to create a Dungeon from a LocationGraph.
+   * Modified Kruskal Algo to create a Dungeon from a DungeonGraph.
    * @param graph : a graph which you want to convert into a dungeon.
    * @param interconnectivity : the interconnectivity of dungeon.
    * @throws IllegalArgumentException : if number of interconnectivity not possible
    *                      with the given graph
    * */
   @Override
-  public void createMazeWithKruskal(LocationInterface graph, int interconnectivity)
+  public void createMazeWithKruskal(GraphInterface graph, int interconnectivity)
           throws IllegalArgumentException {
 
     ArrayList<Map.Entry<Map.Entry<Integer, Integer>, Map.Entry<Integer, Integer>>> result =

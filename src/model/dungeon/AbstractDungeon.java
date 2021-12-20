@@ -8,8 +8,8 @@ import model.kruskal.ArrowEnum;
 import model.kruskal.DirectionEnum;
 import model.kruskal.DungeonBuilder;
 import model.kruskal.DungeonBuilderInterface;
-import model.kruskal.LocationGraph;
-import model.kruskal.LocationInterface;
+import model.kruskal.DungeonGraph;
+import model.kruskal.GraphInterface;
 import model.kruskal.MonsterInterface;
 import model.kruskal.Otyugh;
 import model.kruskal.TreasureEnum;
@@ -35,7 +35,7 @@ import java.util.TreeMap;
  */
 
 
-public abstract class AbstractDungeon implements DungeonInterface {
+public abstract class AbstractDungeon implements model.dungeon.DungeonInterface {
 
   protected final int numberOfRows;
   protected final int numberOfColumns;
@@ -43,7 +43,7 @@ public abstract class AbstractDungeon implements DungeonInterface {
   protected final int interconnectivity;
   protected final double treasurePercent;
   protected final int noOfMonster;
-  protected LocationInterface dungeonGraph;
+  protected GraphInterface dungeonGraph;
   protected   Map.Entry<Integer, Integer> startingPoint;
   protected   Map.Entry<Integer, Integer> goalPoint;
   protected List<MonsterInterface> monsterList;
@@ -89,7 +89,7 @@ public abstract class AbstractDungeon implements DungeonInterface {
     this.treasurePercent = treasurePercent;
     this.noOfMonster = noOfMonster;
     this.interconnectivity = interconnectivity;
-    this.dungeonGraph = new LocationGraph(numberOfRows, numberOfColumns, isWrapped);
+    this.dungeonGraph = new DungeonGraph(numberOfRows, numberOfColumns, isWrapped);
     createDungeon();
     startCalc(this.randomType);
     goalCalc(this.randomType);
@@ -294,15 +294,16 @@ public abstract class AbstractDungeon implements DungeonInterface {
 
 
     player.setCurrentLocation(newLocation);
-    for(var node :dungeonGraph.getIsVisitedList().entrySet()) {
-      if(node.getKey().getKey().equals(newLocation.getKey()) && node.getKey().getValue().equals(newLocation.getValue())) {
+    for (var node :dungeonGraph.getIsVisitedList().entrySet()) {
+      if (node.getKey().getKey().equals(newLocation.getKey())
+          && node.getKey().getValue().equals(newLocation.getValue())) {
         dungeonGraph.getIsVisitedList().replace(node.getKey(),true);
       }
     }
 
     if (dungeonGraph.getMonsterList().get(newLocation) == null && newLocation.equals(goalPoint)) {
       player.setPlayerStatus(PlayerStatus.WINNER);
-      moveMessage.append("Player Wins ! Game Over !\n");
+      moveMessage.append("Player Wins ! Game Over !");
       return moveMessage;
 
 
@@ -320,21 +321,21 @@ public abstract class AbstractDungeon implements DungeonInterface {
         }
         if (rand == 1) {
           player.setPlayerStatus(PlayerStatus.DEAD);
-          moveMessage.append("Player Eaten by Otyugh ! Game Over !\n");
+          moveMessage.append("Player Eaten by Otyugh ! Game Over !");
           return moveMessage;
         }
 
         //when player reaches goal, with a half healthy monster
         if (newLocation.equals(goalPoint)) {
           player.setPlayerStatus(PlayerStatus.WINNER);
-          moveMessage.append("Player Wins ! Game Over !\n");
+          moveMessage.append("Player Wins ! Game Over !");
           return moveMessage;
         }
 
       }
       else if (dungeonGraph.getMonsterList().get(newLocation).getMonsterHealth() == 100) {
         player.setPlayerStatus(PlayerStatus.DEAD);
-        moveMessage.append( "Player Eaten by Otyugh ! Game Over !\n");
+        moveMessage.append( "Player Eaten by Otyugh ! Game Over !");
         return moveMessage;
       }
     }
@@ -379,28 +380,28 @@ public abstract class AbstractDungeon implements DungeonInterface {
     String smell = calculateSmellLevel(monsterLoc, newLocation);
     treasureList.add(smell);
 
-
+    moveMessage.append("This location has : \n");
     for (var items : treasureList) {
       if (items.equals("DIAMOND")) {
-        moveMessage.append("YOU find :1 Daimond\n");
+        moveMessage.append("1 Daimond\n");
       }
       if (items.equals("RUBY")) {
-        moveMessage.append("You find :1 Ruby \n");
+        moveMessage.append("1 Ruby \n");
       }
       if (items.equals("SAPPHIRE")) {
-        moveMessage.append("You find :1 Sapphire \n");
+        moveMessage.append("1 Sapphire \n");
       }
       if (items.equals("CROOKED_ARROW")) {
-        moveMessage.append("You find :1 Arrow \n");
+        moveMessage.append("1 Arrow \n");
       }
       if (items.equals("No Smell")) {
-        moveMessage.append("No Smell\n");
+        moveMessage.append("No Smell ");
       }
       if (items.equals("High Smell")) {
-        moveMessage.append("Something Smells TERRIBLE !!\n");
+        moveMessage.append("Something Smells TERRIBLE !!");
       }
       if (items.equals("Low Smell")) {
-        moveMessage.append("Something Smells !!\n");
+        moveMessage.append("Something Smells !!");
       }
 
 
@@ -561,7 +562,7 @@ public abstract class AbstractDungeon implements DungeonInterface {
             throw new IllegalArgumentException(
                 opt + " not available in present location");
           }
-        } catch(Exception err) {
+        } catch (Exception err) {
           throw new IllegalArgumentException(opt + " not available in present location");
         }
       }
@@ -606,7 +607,7 @@ public abstract class AbstractDungeon implements DungeonInterface {
       treasureLoc.replace(player.getCurrentLocation(), decrementTreasureHelper(opt));
     }
 
-    return pickupMsg.append("You picked up " + opt + "\n");
+    return pickupMsg.append("You picked up " + opt);
 
 
   }
@@ -645,8 +646,9 @@ public abstract class AbstractDungeon implements DungeonInterface {
     StringBuilder moveMessage = new StringBuilder();
     player.setCurrentLocation(startingPoint);
 
-    for(var node :dungeonGraph.getIsVisitedList().entrySet()) {
-      if(node.getKey().getKey().equals(startingPoint.getKey()) && node.getKey().getValue().equals(startingPoint.getValue())) {
+    for (var node :dungeonGraph.getIsVisitedList().entrySet()) {
+      if (node.getKey().getKey().equals(startingPoint.getKey())
+          && node.getKey().getValue().equals(startingPoint.getValue())) {
         dungeonGraph.getIsVisitedList().replace(node.getKey(),true);
       }
     }
@@ -654,7 +656,7 @@ public abstract class AbstractDungeon implements DungeonInterface {
     String smellLev = calculateSmellLevel(dungeonGraph.getMonsterList(),startingPoint);
 
     if (smellLev.equals("No Smell")) {
-      moveMessage.append("\n");
+      moveMessage.append("No Smell ");
     }
     if (smellLev.equals("High Smell")) {
       moveMessage.append("Something Smells TERRIBLE !!\n");

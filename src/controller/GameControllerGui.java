@@ -1,12 +1,5 @@
 package controller;
 
-import com.sun.tools.jconsole.JConsoleContext;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-
-import java.util.Locale;
 import model.dungeon.PlayerStatus;
 import model.dungeon.ReadOnlyModel;
 import model.dungeon.UnWrappedDungeon;
@@ -14,13 +7,29 @@ import model.dungeon.WrappedDungeon;
 import model.kruskal.DirectionEnum;
 import view.IView ;
 
-public class GameControllerGUI implements GameControllerI, ActionListener, KeyListener {
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
+
+/**
+ * Controller for our view.
+ * It implements ActionListener and KeyListener to listen to inputs provided by keypad and
+ * mouse Click.
+ */
+public class GameControllerGui implements GameControllerI, ActionListener, KeyListener {
 
   private ReadOnlyModel dungeonGame;
   private final IView view;
   private int smell;
 
-  public GameControllerGUI(ReadOnlyModel model, IView view) {
+  /**
+   * Constructor for GUI controller.
+   * @param model Read only model.
+   * @param view View interface.
+   */
+  public GameControllerGui(ReadOnlyModel model, IView view) {
     if (model == null || view == null) {
       throw new IllegalArgumentException("Cannot be null");
     }
@@ -40,14 +49,12 @@ public class GameControllerGUI implements GameControllerI, ActionListener, KeyLi
   public void actionPerformed(ActionEvent e) {
     try {
       switch (e.getActionCommand()) {
-
         case "Shoot Button":
           if (!dungeonGame.getPlayer().getPlayerStatus().equals(PlayerStatus.ALIVE)) {
             this.view.removeAllListeners(this, this);
             return;
           }
           view.setListeners(this, this);
-
           String direction = view.getDirectionInput();
           String dir = null;
           switch (direction.toLowerCase()) {
@@ -162,7 +169,7 @@ public class GameControllerGUI implements GameControllerI, ActionListener, KeyLi
           throw new IllegalStateException("Error: Unknown button");
 
       }
-    } catch(IllegalArgumentException error) {
+    } catch (IllegalArgumentException error) {
       this.view.getPromptPane().setText(error.getMessage());
     }
     if (!dungeonGame.getPlayer().getPlayerStatus().equals(PlayerStatus.ALIVE)) {
@@ -218,7 +225,7 @@ public class GameControllerGUI implements GameControllerI, ActionListener, KeyLi
       this.view.removeAllListeners(this, this);
     }
 
-    try{
+    try {
       String moveMessage = String.valueOf(dungeonGame.makeMove(dir));
       String playerMessage = String.valueOf(dungeonGame.getPlayerDesc());
       String desc = moveMessage + playerMessage;
@@ -271,7 +278,7 @@ public class GameControllerGUI implements GameControllerI, ActionListener, KeyLi
   }
 
   /**
-   * Initialize and begin the game.
+   * Initialize and  calls begin method to begin the game.
    */
   public void beginGame() {
     if (this.view.getMazeType()) {
@@ -293,10 +300,13 @@ public class GameControllerGUI implements GameControllerI, ActionListener, KeyLi
     begin();
   }
 
+  /**
+   * Begins the game.
+   */
   public void begin() {
     int smell = 0;
     String message =  String.valueOf( dungeonGame.enterPlayer());
-    String moveMessage =  String.valueOf(dungeonGame.getPlayerDesc());
+
     this.view.generateGameView(this.dungeonGame);
     if (message.toLowerCase().contains("something smells terrible")) {
       smell = 2;
@@ -305,6 +315,7 @@ public class GameControllerGUI implements GameControllerI, ActionListener, KeyLi
       smell = 1;
     }
     this.view.refreshView(this.dungeonGame, smell);
+    String moveMessage =  String.valueOf(dungeonGame.getPlayerDesc());
     this.view.getPromptPane().setText(message + "." + moveMessage);
   }
 }

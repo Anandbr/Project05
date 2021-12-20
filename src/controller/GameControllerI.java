@@ -1,7 +1,5 @@
 package controller;
 
-import model.dungeon.DungeonInterface;
-
 /**
  * Interface controller which handles the control of the game.
  * */

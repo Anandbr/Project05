@@ -7,11 +7,11 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * This interface represents the methods that can be implemented for using LocationGraph.
+ * This interface represents the methods that can be implemented for using DungeonGraph.
  *
  */
 
-public interface LocationInterface {
+public interface GraphInterface {
 
   /**
    * Assigns Treasure at % of locations (at random) that the player can pick.
@@ -54,7 +54,7 @@ public interface LocationInterface {
   int getNumberOfNodes();
 
   /**
-   * Gets the adjacency list of the LocationGraph.
+   * Gets the adjacency list of the DungeonGraph.
    * */
   Map<Map.Entry<Integer, Integer>, List<Map.Entry<Integer, Integer>>> getLocAdjacencyList();
 
@@ -103,7 +103,10 @@ public interface LocationInterface {
    * */
   Map<Map.Entry<Integer, Integer>, MonsterInterface> getMonsterList();
 
-
+  /**
+   * gets the list of visited nodes of the maze by the player.
+   * @return Visited nodes list.
+   */
   Map<Map.Entry<Integer, Integer>, Boolean> getIsVisitedList();
 
 }

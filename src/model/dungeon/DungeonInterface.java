@@ -1,16 +1,6 @@
 package model.dungeon;
 
-import model.kruskal.ArrowEnum;
-import model.kruskal.DirectionEnum;
-import model.kruskal.MonsterInterface;
-import model.kruskal.TreasureEnum;
-
-import java.util.EnumSet;
-import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
-
-
 
 /**
  * This interface represents the methods that can be implemented to build a Dungeon

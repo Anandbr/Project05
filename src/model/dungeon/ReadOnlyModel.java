@@ -1,15 +1,18 @@
 package model.dungeon;
 
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
 import model.kruskal.ArrowEnum;
 import model.kruskal.DirectionEnum;
 import model.kruskal.MonsterInterface;
 import model.kruskal.TreasureEnum;
 
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+/**
+ * Read only model which will be passed to view.
+ */
 public interface ReadOnlyModel {
 
 
